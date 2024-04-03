@@ -31,7 +31,12 @@ function TEvoInCEPBrasilAberto.Get(AValue: string): string;
 var
   LResponse: IResponse;
 begin
-  LResponse := TRequest.New.BaseURL('https://api.brasilaberto.com/v1/zipcode').Resource(AValue).Accept('application/json').Get;
+  LResponse := TRequest
+                 .New
+                 .BaseURL('https://api.brasilaberto.com/v1/zipcode')
+                 .Resource(AValue)
+                 .Accept('application/json')
+                 .Get;
   if LResponse.StatusCode = 200 then
     Result := 'BrasilAberto' + sLineBreak + LResponse.Content ;
 end;

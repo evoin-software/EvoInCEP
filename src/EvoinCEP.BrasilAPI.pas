@@ -31,7 +31,12 @@ function TEvoInCEPBrasilAPI.Get(AValue: string): string;
 var
   LResponse: IResponse;
 begin
-  LResponse := TRequest.New.BaseURL('https://brasilapi.com.br/api/cep/v1').Resource(AValue).Accept('application/json').Get;
+  LResponse := TRequest
+                 .New
+                 .BaseURL('https://brasilapi.com.br/api/cep/v1')
+                 .Resource(AValue)
+                 .Accept('application/json')
+                 .Get;
   if LResponse.StatusCode = 200 then
     Result := 'BrasilAPI' + sLineBreak + LResponse.Content ;
 end;

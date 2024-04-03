@@ -109,6 +109,7 @@
         <DCCReference Include="..\src\EvoinCEP.ViaCEP.pas"/>
         <DCCReference Include="..\src\EvoinCEP.BrasilAberto.pas"/>
         <DCCReference Include="..\src\EvoinCEP.OpenCEP.pas"/>
+        <DCCReference Include="..\src\EvoinCEP.RepublicaVirtual.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>

@@ -31,7 +31,12 @@ function TEvoInCEPOpenCEP.Get(AValue: string): string;
 var
   LResponse: IResponse;
 begin
-  LResponse := TRequest.New.BaseURL('https://opencep.com/v1').Resource(AValue).Accept('application/json').Get;
+  LResponse := TRequest
+                 .New
+                 .BaseURL('https://opencep.com/v1')
+                 .Resource(AValue)
+                 .Accept('application/json')
+                 .Get;
   if LResponse.StatusCode = 200 then
     Result := 'OpenCEP' + sLineBreak + LResponse.Content ;
 end;

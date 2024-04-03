@@ -31,7 +31,13 @@ function TEvoInCEPViaCEP.Get(AValue: string): string;
 var
   LResponse: IResponse;
 begin
-  LResponse := TRequest.New.BaseURL('https://viacep.com.br/ws').Resource(AValue).ResourceSuffix('json').Accept('application/json').Get;
+  LResponse := TRequest
+                 .New
+                 .BaseURL('https://viacep.com.br/ws')
+                 .Resource(AValue)
+                 .ResourceSuffix('json')
+                 .Accept('application/json')
+                 .Get;
   if LResponse.StatusCode = 200 then
     Result := 'ViaCEP' + sLineBreak + LResponse.Content ;
 end;

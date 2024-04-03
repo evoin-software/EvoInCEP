@@ -18,7 +18,7 @@ type
 implementation
 
 uses System.Threading, System.SysUtils, System.Generics.Collections, EvoInCEP.ViaCEP, EvoinCEP.BrasilAPI, EvoinCEP.OpenCEP,
-  EvoinCEP.BrasilAberto;
+  EvoinCEP.BrasilAberto, EvoinCEP.RepublicaVirtual;
 
 function TEvoInCEP.Get(AValue: string): string;
 var
@@ -51,6 +51,12 @@ begin
       function: string
       begin
         Result := TEvoInCEPOpenCEP.New.Get(AValue);
+      end));
+
+    LList.Add(TTask.Future<string>(
+      function: string
+      begin
+        Result := TEvoInCEPRepublicaVirtual.New.Get(AValue);
       end));
 
     TFuture<string>.WaitForAny(LList.ToArray);

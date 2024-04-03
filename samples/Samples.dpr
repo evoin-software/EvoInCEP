@@ -8,7 +8,8 @@ uses
   EvoinCEP.BrasilAPI in '..\src\EvoinCEP.BrasilAPI.pas',
   EvoinCEP.ViaCEP in '..\src\EvoinCEP.ViaCEP.pas',
   EvoinCEP.BrasilAberto in '..\src\EvoinCEP.BrasilAberto.pas',
-  EvoinCEP.OpenCEP in '..\src\EvoinCEP.OpenCEP.pas';
+  EvoinCEP.OpenCEP in '..\src\EvoinCEP.OpenCEP.pas',
+  EvoinCEP.RepublicaVirtual in '..\src\EvoinCEP.RepublicaVirtual.pas';
 
 {$R *.res}
 
