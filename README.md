@@ -6,6 +6,7 @@ APIs:
   - BrasilAberto
   - OpenCep
   - ViaCep
+  - Republica Virtual
 
 ## Instalação Boss
  * `[Optional]` Para facilitar, eu recomendo usar o [**Boss**](https://github.com/HashLoad/boss) (Dependency Manager for Delphi) para instalação, simplesmente executando o comando abaixo em um terminal (Windows PowerShell por exemplo):
