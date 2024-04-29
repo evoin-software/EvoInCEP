@@ -69,7 +69,7 @@ begin
       end;
     end;
   finally
-    LList.DisposeOf;
+    LList.Free;
   end;
 end;
 
