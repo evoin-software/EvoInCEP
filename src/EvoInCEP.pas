@@ -2,69 +2,70 @@ unit EvoInCEP;
 
 interface
 
-uses EvoinCEP.intf;
+uses EvoinCEP.Intf;
 
 type
-  TEvoInCEP = class(TInterfacedObject, IEvoInCEP)
+  TEvoInCEP = class(TInterfacedObject, ICEPRequest)
   private
-    function Get(AValue: string): string;
-    function OnlyNumbers(AValue: string): string;
+    function Get(const AValue: string): ICEPResponse;
+    function OnlyNumbers(const AValue: string): string;
   public
-    constructor Create;
-    destructor Destroy; override;
-    class function New: IEvoInCEP;
+    class function New: ICEPRequest;
   end;
 
 implementation
 
 uses System.Threading, System.SysUtils, System.Generics.Collections, EvoInCEP.ViaCEP, EvoinCEP.BrasilAPI, EvoinCEP.OpenCEP,
-  EvoinCEP.BrasilAberto, EvoinCEP.RepublicaVirtual;
+  EvoinCEP.BrasilAberto;
 
-function TEvoInCEP.Get(AValue: string): string;
+function TEvoInCEP.Get(const AValue: string): ICEPResponse;
 var
-  LTask: ITask;
+  LCEP: string;
   LList: TList<ITask>;
 begin
-  AValue := OnlyNumbers(AValue).PadLeft(8, '0');
+  LCEP := OnlyNumbers(AValue).PadLeft(8, '0');
 
   LList := TList<ITask>.Create;
   try
-    LList.Add(TTask.Future<string>(
-      function: string
+    LList.Add(TTask.Future<ICEPResponse>(
+      function: ICEPResponse
       begin
-        Result := TEvoInCEPViaCEP.New.Get(AValue);
+        Result := TViaCEP.New.Get(LCEP);
+        if not Assigned(Result) then
+          raise Exception.Create('Internal server error.');
       end));
 
-    LList.Add(TTask.Future<string>(
-      function: string
+    LList.Add(TTask.Future<ICEPResponse>(
+      function: ICEPResponse
       begin
-        Result := TEvoInCEPBrasilAPI.New.Get(AValue);
+        Result := TBrasilAPI.New.Get(LCEP);
+        if not Assigned(Result) then
+          raise Exception.Create('Internal server error.');
       end));
 
-    LList.Add(TTask.Future<string>(
-      function: string
+    LList.Add(TTask.Future<ICEPResponse>(
+      function: ICEPResponse
       begin
-        Result := TEvoInCEPBrasilAberto.New.Get(AValue);
+        Result := TBrasilAberto.New.Get(LCEP);
+        if not Assigned(Result) then
+          raise Exception.Create('Internal server error.');
       end));
 
-    LList.Add(TTask.Future<string>(
-      function: string
+    LList.Add(TTask.Future<ICEPResponse>(
+      function: ICEPResponse
       begin
-        Result := TEvoInCEPOpenCEP.New.Get(AValue);
+        Result := TOpenCEP.New.Get(LCEP);
+        if not Assigned(Result) then
+          raise Exception.Create('Internal server error.');
       end));
 
-    LList.Add(TTask.Future<string>(
-      function: string
-      begin
-        Result := TEvoInCEPRepublicaVirtual.New.Get(AValue);
-      end));
+    TFuture<ICEPResponse>.WaitForAny(LList.ToArray);
 
-    TFuture<string>.WaitForAny(LList.ToArray);
-    for LTask in LList do
+    for var LTask in LList do
     begin
       if LTask.Status = TTaskStatus.Completed then
       begin
-        Result := IFuture<string>(LTask).Value;
+        Result := IFuture<ICEPResponse>(LTask).Value;
         Break;
       end;
     end;
@@ -73,27 +74,14 @@ begin
   end;
 end;
 
-constructor TEvoInCEP.Create;
-begin
-
-end;
-
-destructor TEvoInCEP.Destroy;
-begin
-
-  inherited;
-end;
-
-class function TEvoInCEP.New: IEvoInCEP;
+class function TEvoInCEP.New: ICEPRequest;
 begin
   Result := Self.Create;
 end;
 
-function TEvoInCEP.OnlyNumbers(AValue: string): string;
-var
-  I: SmallInt;
+function TEvoInCEP.OnlyNumbers(const AValue: string): string;
 begin
-  for I := 1 to Length(AValue) do
+  for var I := 1 to Length(AValue) do
   begin
     if CharInSet(AValue[I], ['0'..'9']) then
       Result := Result + AValue[I];

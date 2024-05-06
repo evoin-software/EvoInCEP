@@ -26,9 +26,8 @@ uses EvoInCEP;
 
 procedure TForm1.Button1Click(Sender: TObject);
 begin
- Memo1.Text := TEvoInCEP.New.Get(Edit1.Text);
+  Memo1.Text := TEvoInCEP.New.Get(Edit1.Text).CEP;
 end;
-
 
 procedure TForm1.Button2Click(Sender: TObject);
 begin

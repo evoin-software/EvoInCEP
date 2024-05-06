@@ -2,47 +2,48 @@ unit EvoinCEP.ViaCEP;
 
 interface
 
-uses EvoInCEP.intf, RESTRequest4D;
+uses EvoInCEP.Intf, RESTRequest4D;
 
 type
-  TEvoInCEPViaCEP = class(TInterfacedObject, IEvoInCEP)
+  TViaCEP = class(TInterfacedObject, ICEPRequest)
   private
-    function Get(AValue: string): string;
+    function Get(const AValue: string): ICEPResponse;
   public
-    constructor Create;
-    destructor Destroy; override;
-    class function New: IEvoInCEP;
+    class function New: ICEPRequest;
   end;
 
 implementation
 
-constructor TEvoInCEPViaCEP.Create;
-begin
+uses EvoInCEP.Response;
 
+function TViaCEP.Get(const AValue: string): ICEPResponse;
+begin
+  Result := nil;
+
+  var LResponse := TRequest.New
+    .BaseURL('https://viacep.com.br/ws')
+    .Resource(AValue)
+    .ResourceSuffix('json')
+    .Accept('application/json')
+    .Get;
+
+  if LResponse.StatusCode <> 200 then
+    Exit;
+
+  Result := TCEPResponse.New(
+    LResponse.JSONValue.GetValue<string>('cep', ''),
+    LResponse.JSONValue.GetValue<string>('bairro', ''),
+    LResponse.JSONValue.GetValue<string>('logradouro', ''),
+    LResponse.JSONValue.GetValue<string>('localidade', ''),
+    LResponse.JSONValue.GetValue<string>('ibge', ''),
+    LResponse.JSONValue.GetValue<string>('uf', ''),
+    LResponse.JSONValue.GetValue<string>('complemento', ''),
+    LResponse.JSONValue.GetValue<string>('ddd', ''),
+    LResponse.JSONValue.GetValue<string>('gia', ''),
+    LResponse.JSONValue.GetValue<string>('siafi', ''));
 end;
 
-destructor TEvoInCEPViaCEP.Destroy;
-begin
-
-  inherited;
-end;
-
-function TEvoInCEPViaCEP.Get(AValue: string): string;
-var
-  LResponse: IResponse;
-begin
-  LResponse := TRequest
-                 .New
-                 .BaseURL('https://viacep.com.br/ws')
-                 .Resource(AValue)
-                 .ResourceSuffix('json')
-                 .Accept('application/json')
-                 .Get;
-  if LResponse.StatusCode = 200 then
-    Result := 'ViaCEP' + sLineBreak + LResponse.Content ;
-end;
-
-class function TEvoInCEPViaCEP.New: IEvoInCEP;
+class function TViaCEP.New: ICEPRequest;
 begin
   Result := Self.Create;
 end;

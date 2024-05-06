@@ -2,46 +2,47 @@ unit EvoinCEP.OpenCEP;
 
 interface
 
-uses EvoInCEP.intf, RESTRequest4D;
+uses EvoInCEP.Intf, RESTRequest4D;
 
 type
-  TEvoInCEPOpenCEP = class(TInterfacedObject, IEvoInCEP)
+  TOpenCEP = class(TInterfacedObject, ICEPRequest)
   private
-    function Get(AValue: string): string;
+    function Get(const AValue: string): ICEPResponse;
   public
-    constructor Create;
-    destructor Destroy; override;
-    class function New: IEvoInCEP;
+    class function New: ICEPRequest;
   end;
 
 implementation
 
-constructor TEvoInCEPOpenCEP.Create;
-begin
+uses EvoInCEP.Response;
 
+function TOpenCEP.Get(const AValue: string): ICEPResponse;
+begin
+  Result := nil;
+
+  var LResponse := TRequest.New
+    .BaseURL('https://opencep.com/v1')
+    .Resource(AValue)
+    .Accept('application/json')
+    .Get;
+
+  if LResponse.StatusCode <> 200 then
+    Exit;
+
+  Result := TCEPResponse.New(
+    LResponse.JSONValue.GetValue<string>('cep', ''),
+    LResponse.JSONValue.GetValue<string>('bairro', ''),
+    LResponse.JSONValue.GetValue<string>('logradouro', ''),
+    LResponse.JSONValue.GetValue<string>('localidade', ''),
+    LResponse.JSONValue.GetValue<string>('ibge', ''),
+    LResponse.JSONValue.GetValue<string>('uf', ''),
+    LResponse.JSONValue.GetValue<string>('complemento', ''),
+    '',
+    '',
+    '');
 end;
 
-destructor TEvoInCEPOpenCEP.Destroy;
-begin
-
-  inherited;
-end;
-
-function TEvoInCEPOpenCEP.Get(AValue: string): string;
-var
-  LResponse: IResponse;
-begin
-  LResponse := TRequest
-                 .New
-                 .BaseURL('https://opencep.com/v1')
-                 .Resource(AValue)
-                 .Accept('application/json')
-                 .Get;
-  if LResponse.StatusCode = 200 then
-    Result := 'OpenCEP' + sLineBreak + LResponse.Content ;
-end;
-
-class function TEvoInCEPOpenCEP.New: IEvoInCEP;
+class function TOpenCEP.New: ICEPRequest;
 begin
   Result := Self.Create;
 end;

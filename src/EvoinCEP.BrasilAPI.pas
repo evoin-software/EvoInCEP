@@ -2,46 +2,47 @@ unit EvoinCEP.BrasilAPI;
 
 interface
 
-uses EvoInCEP.intf, RESTRequest4D;
+uses EvoInCEP.Intf, RESTRequest4D;
 
 type
-  TEvoInCEPBrasilAPI = class(TInterfacedObject, IEvoInCEP)
+  TBrasilAPI = class(TInterfacedObject, ICEPRequest)
   private
-    function Get(AValue: string): string;
+    function Get(const AValue: string): ICEPResponse;
   public
-    constructor Create;
-    destructor Destroy; override;
-    class function New: IEvoInCEP;
+    class function New: ICEPRequest;
   end;
 
 implementation
 
-constructor TEvoInCEPBrasilAPI.Create;
-begin
+uses EvoInCEP.Response;
 
+function TBrasilAPI.Get(const AValue: string): ICEPResponse;
+begin
+  Result := nil;
+
+  var LResponse := TRequest.New
+    .BaseURL('https://brasilapi.com.br/api/cep/v1')
+    .Resource(AValue)
+    .Accept('application/json')
+    .Get;
+
+  if LResponse.StatusCode <> 200 then
+    Exit;
+
+  Result := TCEPResponse.New(
+    LResponse.JSONValue.GetValue<string>('cep', ''),
+    LResponse.JSONValue.GetValue<string>('neighborhood', ''),
+    LResponse.JSONValue.GetValue<string>('street', ''),
+    LResponse.JSONValue.GetValue<string>('city', ''),
+    '',
+    LResponse.JSONValue.GetValue<string>('state', ''),
+    LResponse.JSONValue.GetValue<string>('complement', ''),
+    '',
+    '',
+    '');
 end;
 
-destructor TEvoInCEPBrasilAPI.Destroy;
-begin
-
-  inherited;
-end;
-
-function TEvoInCEPBrasilAPI.Get(AValue: string): string;
-var
-  LResponse: IResponse;
-begin
-  LResponse := TRequest
-                 .New
-                 .BaseURL('https://brasilapi.com.br/api/cep/v1')
-                 .Resource(AValue)
-                 .Accept('application/json')
-                 .Get;
-  if LResponse.StatusCode = 200 then
-    Result := 'BrasilAPI' + sLineBreak + LResponse.Content ;
-end;
-
-class function TEvoInCEPBrasilAPI.New: IEvoInCEP;
+class function TBrasilAPI.New: ICEPRequest;
 begin
   Result := Self.Create;
 end;
