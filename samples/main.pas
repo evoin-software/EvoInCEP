@@ -20,13 +20,26 @@ var
 
 implementation
 
-uses EvoInCEP;
+uses
+  EvoInCEP,
+  EvoOutCEP;
 
 {$R *.dfm}
 
 procedure TForm1.Button1Click(Sender: TObject);
+var
+  LParceCEP : IEvoOutCEP;
 begin
- Memo1.Text := TEvoInCEP.New.Get(Edit1.Text);
+  Memo1.Text := TEvoInCEP.New.Get(Edit1.Text);
+
+  LParceCEP := TEvoOutCEP.New.Json(Memo1.Text);
+
+  Memo1.Lines.Add('');
+  Memo1.Lines.Add(Format('Rua : %s',[LParceCEP.Rua]));
+  Memo1.Lines.Add(Format('Bairro : %s',[LParceCEP.Bairro]));
+  Memo1.Lines.Add(Format('Cidade : %s',[LParceCEP.Cidade]));
+  Memo1.Lines.Add(Format('Estado : %s',[LParceCEP.Estado]));
+
 end;
 
 
