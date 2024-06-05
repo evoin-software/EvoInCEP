@@ -26,7 +26,7 @@ uses EvoInCEP;
 
 procedure TForm1.Button1Click(Sender: TObject);
 begin
-  var LCEP := TEvoInCEP.New(TAPIDefault.ViaCep).Get(Edit1.Text);
+  var LCEP := TEvoInCEP.New(TAPIDefault.All).Get(Edit1.Text);
 
   Memo1.Clear;
   Memo1.Lines.Add('CEP: ' + LCEP.CEP);
