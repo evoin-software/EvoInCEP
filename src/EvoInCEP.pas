@@ -33,6 +33,7 @@ uses System.Threading, System.SysUtils, System.Generics.Collections, EvoInCEP.Vi
 
 constructor TEvoInCEP.Create(const AAPIDefault: TAPIDefault);
 begin
+  inherited Create;
   FAPIDefault := AAPIDefault;
 end;
 
@@ -70,25 +71,25 @@ begin
         end));
 
     if MakeRequest(TAPIDefault.BrasilAPI) then
-    LList.Add(TTask.Future<ICEPResponse>(
-      function: ICEPResponse
-      begin
-        Result := TBrasilAPI.New.Get(AValue);
-      end));
+      LList.Add(TTask.Future<ICEPResponse>(
+        function: ICEPResponse
+        begin
+          Result := TBrasilAPI.New.Get(AValue);
+        end));
 
     if MakeRequest(TAPIDefault.BrasilAberto) then
-    LList.Add(TTask.Future<ICEPResponse>(
-      function: ICEPResponse
-      begin
-        Result := TBrasilAberto.New.Get(AValue);
-      end));
+      LList.Add(TTask.Future<ICEPResponse>(
+        function: ICEPResponse
+        begin
+          Result := TBrasilAberto.New.Get(AValue);
+        end));
 
-   if MakeRequest(TAPIDefault.OpenCEP) then
-    LList.Add(TTask.Future<ICEPResponse>(
-      function: ICEPResponse
-      begin
-        Result := TOpenCEP.New.Get(AValue);
-      end));
+    if MakeRequest(TAPIDefault.OpenCEP) then
+      LList.Add(TTask.Future<ICEPResponse>(
+        function: ICEPResponse
+        begin
+          Result := TOpenCEP.New.Get(AValue);
+        end));
 
     TFuture<ICEPResponse>.WaitForAny(LList.ToArray);
 
