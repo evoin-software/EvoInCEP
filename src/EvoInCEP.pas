@@ -59,6 +59,7 @@ function TEvoInCEP.GetAll(const AValue: string): ICEPResponse;
 var
   LList: TList<ITask>;
 begin
+
   LList := TList<ITask>.Create;
   try
     if MakeRequest(TAPIDefault.ViaCep) then
@@ -66,8 +67,6 @@ begin
         function: ICEPResponse
         begin
           Result := TViaCEP.New.Get(AValue);
-          if not Assigned(Result) then
-            raise Exception.Create('Internal server error.');
         end));
 
     if MakeRequest(TAPIDefault.BrasilAPI) then
@@ -75,8 +74,6 @@ begin
       function: ICEPResponse
       begin
         Result := TBrasilAPI.New.Get(AValue);
-        if not Assigned(Result) then
-          raise Exception.Create('Internal server error.');
       end));
 
     if MakeRequest(TAPIDefault.BrasilAberto) then
@@ -84,8 +81,6 @@ begin
       function: ICEPResponse
       begin
         Result := TBrasilAberto.New.Get(AValue);
-        if not Assigned(Result) then
-          raise Exception.Create('Internal server error.');
       end));
 
    if MakeRequest(TAPIDefault.OpenCEP) then
@@ -93,8 +88,6 @@ begin
       function: ICEPResponse
       begin
         Result := TOpenCEP.New.Get(AValue);
-        if not Assigned(Result) then
-          raise Exception.Create('Internal server error.');
       end));
 
     TFuture<ICEPResponse>.WaitForAny(LList.ToArray);
@@ -104,11 +97,14 @@ begin
       if LTask.Status = TTaskStatus.Completed then
       begin
         Result := IFuture<ICEPResponse>(LTask).Value;
-        Break;
+        if Assigned(Result) then
+          Break;
       end;
     end;
   finally
     LList.Free;
+    if not Assigned(Result) then
+      raise Exception.Create('Internal server error.');
   end;
 end;
 
