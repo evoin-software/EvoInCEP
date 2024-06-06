@@ -60,7 +60,6 @@ function TEvoInCEP.GetAll(const AValue: string): ICEPResponse;
 var
   LList: TList<ITask>;
 begin
-
   LList := TList<ITask>.Create;
   try
     if MakeRequest(TAPIDefault.ViaCep) then
