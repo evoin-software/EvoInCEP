@@ -26,9 +26,13 @@ uses EvoInCEP;
 
 procedure TForm1.Button1Click(Sender: TObject);
 begin
+  Memo1.Clear;
+
   var LCEP := TEvoInCEP.New(TAPIDefault.All).Get(Edit1.Text);
 
-  Memo1.Clear;
+  if not Assigned(LCEP) then
+    Exit;
+
   Memo1.Lines.Add('CEP: ' + LCEP.CEP);
   Memo1.Lines.Add('BAIRRO: ' + LCEP.Bairro);
   Memo1.Lines.Add('LOGRADOURO: ' + LCEP.Logradouro);
