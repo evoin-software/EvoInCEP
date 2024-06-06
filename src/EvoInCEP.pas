@@ -67,6 +67,8 @@ begin
         function: ICEPResponse
         begin
           Result := TViaCEP.New.Get(AValue);
+          if not Assigned(Result) then
+            Sleep(4000);
         end));
 
     if MakeRequest(TAPIDefault.BrasilAPI) then
@@ -74,6 +76,8 @@ begin
         function: ICEPResponse
         begin
           Result := TBrasilAPI.New.Get(AValue);
+          if not Assigned(Result) then
+            Sleep(4000);
         end));
 
     if MakeRequest(TAPIDefault.BrasilAberto) then
@@ -81,6 +85,8 @@ begin
         function: ICEPResponse
         begin
           Result := TBrasilAberto.New.Get(AValue);
+          if not Assigned(Result) then
+            Sleep(4000);
         end));
 
     if MakeRequest(TAPIDefault.OpenCEP) then
@@ -88,6 +94,8 @@ begin
         function: ICEPResponse
         begin
           Result := TOpenCEP.New.Get(AValue);
+          if not Assigned(Result) then
+            Sleep(4000);
         end));
 
     TFuture<ICEPResponse>.WaitForAny(LList.ToArray);
@@ -95,16 +103,12 @@ begin
     for var LTask in LList do
     begin
       if LTask.Status = TTaskStatus.Completed then
-      begin
         Result := IFuture<ICEPResponse>(LTask).Value;
-        if Assigned(Result) then
-          Break;
-      end;
+      if Assigned(Result) then
+        Break;
     end;
   finally
     LList.Free;
-    if not Assigned(Result) then
-      raise Exception.Create('Internal server error.');
   end;
 end;
 
