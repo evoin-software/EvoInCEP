@@ -2,7 +2,7 @@ unit EvoInCEP;
 
 interface
 
-uses EvoinCEP.Intf;
+uses EvoInCEP.Intf;
 
 type
 {$SCOPEDENUMS ON}
@@ -27,9 +27,8 @@ type
 
 implementation
 
-uses System.Threading, System.SysUtils, System.Generics.Collections, EvoInCEP.ViaCEP, EvoinCEP.BrasilAPI, EvoinCEP.OpenCEP,
-  EvoinCEP.BrasilAberto;
-
+uses System.Threading, System.SysUtils, System.Generics.Collections, EvoInCEP.ViaCep, EvoInCEP.BrasilAPI, EvoInCEP.OpenCEP,
+  EvoInCEP.BrasilAberto;
 
 constructor TEvoInCEP.Create(const AAPIDefault: TAPIDefault);
 begin
@@ -154,7 +153,7 @@ function TEvoInCEP.OnlyNumbers(const AValue: string): string;
 begin
   for var I := 1 to Length(AValue) do
   begin
-    if CharInSet(AValue[I], ['0'..'9']) then
+    if CharInSet(AValue[I], ['0' .. '9']) then
       Result := Result + AValue[I];
   end;
 end;
